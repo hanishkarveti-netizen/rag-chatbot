@@ -4,6 +4,8 @@ from langchain_community.document_loaders import (
 )
 
 from langchain_text_splitters import RecursiveCharacterTextSplitter
+from langchain_openai import OpenAIEmbeddings
+
 
 def load_pdf(file_path):
 
@@ -26,17 +28,30 @@ def load_docx(file_path):
 def split_documents(documents):
 
     text_splitter = RecursiveCharacterTextSplitter(
-        chunk_size=200,
-        chunk_overlap=20
+        chunk_size=1000,
+        chunk_overlap=200
     )
 
     chunks = text_splitter.split_documents(documents)
+    
+    # PRINT CHUNKS IN VS CODE TERMINAL
+    # for index, chunk in enumerate(chunks):
 
-    for index, chunk in enumerate(chunks):
+    #     print(f"CHUNK NUMBER : {index + 1}")
 
-        print(f"CHUNK NUMBER : {index + 1}")
+    #     print(chunk.page_content)
 
-        print(chunk.page_content)
-
-        print("\n")
     return chunks
+def embedding_documents(documents):
+    embeddings = OpenAIEmbeddings(model="text-embedding-3-small")
+    vector = embeddings.embed_documents(documents)
+    # print(vector)
+    return vector
+
+# def print_split_document(split_documents , embedding_documents):
+#     for index, chunk in enumerate(chunks):
+
+#         print(f"CHUNK NUMBER : {index + 1}")
+
+#         print(chunk.page_content)
+# print(vector)
