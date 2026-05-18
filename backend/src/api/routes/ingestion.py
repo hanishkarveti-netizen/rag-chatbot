@@ -1,5 +1,4 @@
 from fastapi import APIRouter, UploadFile, File
-from langchain_openai import OpenAIEmbeddings
 import shutil
 import os
 
@@ -7,7 +6,7 @@ from src.services.ingestion.ingestion import (
     load_pdf,
     load_docx,
     split_documents,
-    embedding_documents
+    generate_embeddings
 )
 
 router = APIRouter()
@@ -50,16 +49,19 @@ async def ingest_document(file: UploadFile = File(...)):
     for chunk in chunks:
 
         chunk_texts.append(chunk.page_content)
+    chunks = split_documents(documents)
 
+    embeddings = generate_embeddings(chunks)
     return {
         "filename": file.filename,
         "total_chunks": len(chunks),
         "chunks": chunk_texts
     }
-def print_split_document(split_documents , embedding_documents):
-    for index, chunk in enumerate(chunks):
 
-        print(f"CHUNK NUMBER : {index + 1}")
+# def print_split_document(split_documents , embedding_documents):
+#     for index, chunk in enumerate(chunks):
 
-        print(chunk.page_content)
-        print(vector)
+#         print(f"CHUNK NUMBER : {index + 1}")
+
+#         print(chunk.page_content)
+#         print(embeddings)

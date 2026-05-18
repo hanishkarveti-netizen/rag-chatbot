@@ -4,7 +4,7 @@ from langchain_community.document_loaders import (
 )
 
 from langchain_text_splitters import RecursiveCharacterTextSplitter
-from langchain_openai import OpenAIEmbeddings
+from langchain_huggingface import HuggingFaceEmbeddings
 
 
 def load_pdf(file_path):
@@ -35,23 +35,34 @@ def split_documents(documents):
     chunks = text_splitter.split_documents(documents)
     
     # PRINT CHUNKS IN VS CODE TERMINAL
-    # for index, chunk in enumerate(chunks):
+    for index, chunk in enumerate(chunks):
 
-    #     print(f"CHUNK NUMBER : {index + 1}")
+        print(f"CHUNK NUMBER : {index + 1}")
 
-    #     print(chunk.page_content)
+        print(chunk.page_content)
 
     return chunks
-def embedding_documents(documents):
-    embeddings = OpenAIEmbeddings(model="text-embedding-3-small")
-    vector = embeddings.embed_documents(documents)
-    # print(vector)
-    return vector
+def generate_embeddings(chunks):
+    embedding_model = HuggingFaceEmbeddings(
+        model_name="BAAI/bge-small-en-v1.5"
+    )
+
+    embeddings = embedding_model.embed_documents(
+
+        [chunk.page_content for chunk in chunks]
+
+    )
+    for index, vector in enumerate(embeddings):
+
+        print(f"EMBEDDING {index+1}")
+
+        print(vector[:10])
+    return embeddings
 
 # def print_split_document(split_documents , embedding_documents):
 #     for index, chunk in enumerate(chunks):
-
-#         print(f"CHUNK NUMBER : {index + 1}")
-
-#         print(chunk.page_content)
-# print(vector)
+#         for index, vector in enumerate(embeddings):
+#             print(f"CHUNK NUMBER : {index + 1}")
+#             print(chunk.page_content)
+#             print(f"EMBEDDING {index+1}")
+#             print(vector[:10])
