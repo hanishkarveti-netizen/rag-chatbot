@@ -5,6 +5,8 @@ from langchain_community.document_loaders import (
 
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_huggingface import HuggingFaceEmbeddings
+from langchain_chroma import Chroma
+
 
 
 def load_pdf(file_path):
@@ -21,7 +23,7 @@ def load_docx(file_path):
     loader = Docx2txtLoader(file_path)
 
     documents = loader.load()
-
+    
     return documents
 
 
@@ -66,3 +68,25 @@ def generate_embeddings(chunks):
 #             print(chunk.page_content)
 #             print(f"EMBEDDING {index+1}")
 #             print(vector[:10])
+
+#creating indexing and chromadb
+
+def store_embeddings(chunks):
+
+    embedding_model = HuggingFaceEmbeddings(
+        model_name="BAAI/bge-small-en-v1.5"
+    )
+
+    vector_store = Chroma.from_documents(
+
+        documents=chunks,
+
+        embedding=embedding_model,
+
+        persist_directory = "./chromadb"
+
+    )
+    print("Indexing Completed")
+    print("Vectors stored in chromadb")
+
+    return vector_store

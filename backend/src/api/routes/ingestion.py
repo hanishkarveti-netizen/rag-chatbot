@@ -6,7 +6,8 @@ from src.services.ingestion.ingestion import (
     load_pdf,
     load_docx,
     split_documents,
-    generate_embeddings
+    generate_embeddings,
+    store_embeddings
 )
 
 router = APIRouter()
@@ -52,11 +53,13 @@ async def ingest_document(file: UploadFile = File(...)):
     chunks = split_documents(documents)
 
     embeddings = generate_embeddings(chunks)
+    vector_store = store_embeddings(chunks)
     return {
         "filename": file.filename,
         "total_chunks": len(chunks),
         "chunks": chunk_texts
     }
+
 
 # def print_split_document(split_documents , embedding_documents):
 #     for index, chunk in enumerate(chunks):
