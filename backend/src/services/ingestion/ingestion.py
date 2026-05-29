@@ -4,10 +4,8 @@ from langchain_community.document_loaders import (
 )
 
 from langchain_text_splitters import RecursiveCharacterTextSplitter
-from langchain_huggingface import HuggingFaceEmbeddings
-from langchain_chroma import Chroma
 
-
+#loading pdf's are documents
 
 def load_pdf(file_path):
 
@@ -26,7 +24,7 @@ def load_docx(file_path):
     
     return documents
 
-
+#Creating chunks
 def split_documents(documents):
 
     text_splitter = RecursiveCharacterTextSplitter(
@@ -36,57 +34,13 @@ def split_documents(documents):
 
     chunks = text_splitter.split_documents(documents)
     
-    # PRINT CHUNKS IN VS CODE TERMINAL
+    # PRINT CHUNKS 
     for index, chunk in enumerate(chunks):
 
         print(f"CHUNK NUMBER : {index + 1}")
 
         print(chunk.page_content)
+        print("/n")
 
     return chunks
-def generate_embeddings(chunks):
-    embedding_model = HuggingFaceEmbeddings(
-        model_name="BAAI/bge-small-en-v1.5"
-    )
 
-    embeddings = embedding_model.embed_documents(
-
-        [chunk.page_content for chunk in chunks]
-
-    )
-    for index, vector in enumerate(embeddings):
-
-        print(f"EMBEDDING {index+1}")
-
-        print(vector[:10])
-    return embeddings
-
-# def print_split_document(split_documents , embedding_documents):
-#     for index, chunk in enumerate(chunks):
-#         for index, vector in enumerate(embeddings):
-#             print(f"CHUNK NUMBER : {index + 1}")
-#             print(chunk.page_content)
-#             print(f"EMBEDDING {index+1}")
-#             print(vector[:10])
-
-#creating indexing and chromadb
-
-def store_embeddings(chunks):
-
-    embedding_model = HuggingFaceEmbeddings(
-        model_name="BAAI/bge-small-en-v1.5"
-    )
-
-    vector_store = Chroma.from_documents(
-
-        documents=chunks,
-
-        embedding=embedding_model,
-
-        persist_directory = "./chromadb"
-
-    )
-    print("Indexing Completed")
-    print("Vectors stored in chromadb")
-
-    return vector_store
