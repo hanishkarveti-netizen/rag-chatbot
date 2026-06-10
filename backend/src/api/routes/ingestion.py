@@ -82,6 +82,8 @@ async def query_document(
     question: str
 ):
     results = retrieve_chunks(question)
+
+
     return {
         "question": question,
         "similar_chunks": results["documents"]
